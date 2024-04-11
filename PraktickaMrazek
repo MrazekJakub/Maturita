@@ -1,0 +1,282 @@
+Winde si čuraka z huby
+1)
+Nový  ->  nazev() -> iso (empty) -> verze (other win)
+Parametry pro win jadra + ramky
+uložiště +50gb
+nastavní- > uložiště -> žádný -> cd (vybereme iso na WIN)
+Síť 2x  nat; vvnítřní síť 
+pustíme
+Čas +  klavesnice -> CZ
+Instal
+Desktop expirience standart
+Custome instalce
+Next 
+Krimpování / kaystone
+2)
+User -> admin
+Heslo -> asdf!123
+Finish
+Tab -> zařízení -> předposlední(vložit obraz disku)-> PC ->cd drive (next->next->…)
+(auto restart)
+3)
+Přejmenování serveru -> configure
+Computername-> change -> ranmbo->ok->ok ->restart
+Configure-> ethernet-> sítové jednotky(rename)-> network=nat, identifik = intnet
+Intnet -> properties-> ipv4 ->use folowing
+IP->192.168.0.1
+Subnet mask->255.255.255.128
+Default gateway(Nazev routru)->192.168.0 128
+Prefer dns -> 192.18.0.1
+Alternate dns -> 127.0.0.1
+Advance ->dns->add-> 8.8.8.8 ; 1.1.1.1
+192 -> 127 ->8 ->1
+Ok->close
+4)
+Dashbord-> tools->computer managment
+Local users + groups -> users-> nw user
+	Alan
+	Alan Delon
+	Sekundarní adminitrator serveru
+	Delon!123
+	Create
+Groups-> administrators -> properties -> add ->Alan
+Users->alan-> properties-> profile*
+C: -> new folder->alandelon
+Properties->shering->advace->permisions>add-> alan->ok
+Full control
+ok
+*profil path -> C:\alan_delon (zkopírovaní cesty)
+Add roles + ficure
+5)(není nebude)
+6/7)
+Nnext->next->(čekáme)->rever roles(activ direktory domain services, DHCP, DNS, web server)->next->next->next->next->check box (confirmation)->install->(čekáme)->close
+Restart
+Vlaka+ vykřičník-> promote this server-> add new forest-> udelatko.local-> heslo(asdf!123)-> next…->install->auto restart
+Vlajka + vykřičník -> copleate DHCP-> next-> comit-> cloase
+Tools->dhcp -> ranbo->ipv4->newscope ->next->name(mynet)->
+192.168.0.10
+192.168.0.100
+25
+Next->
+ 192.168.0.100
+	192.168.0.110
+	 Next->
+	10( čas v minutách)
+	Next-> 
+	192.168.0.126
+	Next->
+	127.0.0.1 -> add
+	1.1.1.1-> add
+	8.8.8.8-> add
+	Next->….
+	Finish
+	Ipv4-> refresh
+	8)/9)
+Tools-> activ direktory U+ PC -> udelatko.local-> new ->OU(organizační jednotka)->
+	Mojeskupiny->*
+  	Skalaci
+	Naplava
+		*new group-> skaláci, náplava
+10)
+OU->skalaci->new user
+	Jaroslav
+	Vousac
+	Vous
+	Fousek!123
+Finish
+Vous->properties->account-> logon hours-> 6/15 pracovní dny
+Member of-> add-> skaláci
+C:-> new folder-> profiles->properties-> sharing->advance-> permision->skalaci->full control->ok
+Security->edit->add-> skalaci->full contorl->ok
+Activ direktory -> vous-> properties-> profil-> profil path: \\rambo\profiles\vous-> aply
+Account->change passwd new login -> ok
+11)
+C: -> new folder-> pisemnosti-> properties-> sharing-> add-> naplava, skalaci(full control)
+Security-> naplava, skalaci(full control)
+12)
+Tools-> GPO-> forest:udelatko->domains-> udelaatko.local->naplava->create gpo->pisemnosti-> delegation
+13)
+Tools->dns manager->rambo->forwrd zones->udelatko.local ->new host->
+	www
+	192.168.0.1
+	Add host->
+	machina
+	192.168.0.1
+	Add host -> ok
+Right click New Cname-> 
+	web
+	www.udelatko.local
+	ok
+14) není
+15)
+tools->GPO->forest->udelatko.local-> default domain-> seting->add-> security setings   -> passwd police->default -> edit
+	police-> win seting-> securiti-> acc police-> ass police	
+		 3
+		30
+		1	
+		12	
+
+bonus
+Tools-> IIS-> rambo->add webside->
+	www
+(C: ->new folder -> wevs -> new folder-> www-> new file-> index.html
+(ahoj nějaký ten text z hovna))
+	Cesta k www(C:\webs\www)
+	www.udelatko.local
+	ok
+
+
+
+
+
+Linxonoš
+1)
+Nový -> nazev() -> iso(empty) -> verze(other linux)
+Parametry pro linux jadra + ramky
+uložiště +50gb
+nastavní- > uložiště -> žádný -> cd (vybereme iso na linx)
+Síť 2x  nat; vvnítřní síť
+Pustíme
+Klavesnice CZ
+radio druhé 
+continue
+Instal type -> something else
+Rodělení disku
+New partition -> continue(free space)
+Double klik
+size -> 512 
+use as -> EFI 
+Double klik
+Size -> 1000
+Use as -> bios boot
+Double klik
+Size -> 2000
+Use as -> swap area
+Double klik
+Size -> 10000
+Use as -> ext4
+Mount point - > home
+Double klik
+Size -> zbytek
+Use as -> ext4
+Mount point ->  /
+Instal now -> continue
+Zadaní jmena machiny a hesla
+Continue
+Krimpování / kaystone
+2)
+Next-> next-> ….(osobní nastavení)
+Sudo -i
+adduser admin  -- home /admin/data
+admin heslo asdf!123
+full name linux administrátor (zbytel empty)
+chmod 700 /admin/data/
+adduser alan   --home /home/alan
+heslo asdf!123
+full name  Alan Delon
+groupadd delon
+nano /etc/group
+adm ++ admin
+sudo ++admin
+delon ++ alan
+save + leave
+chmod 740 /home/alan/
+
+3)
+nano test.sh
+	Cp -R ~/Dokumenty /tmp
+	Kill -kill 15658
+	Mkdir ~/Script
+	Touch ~/test.sh
+	Chmod ug+x ~/test.sh
+	Chown alan ~/test.sh
+	Ps -a
+4)
+Crontab -e  ->  1
+(konec stránky)
+0 1 * * 1  ~/test.sh
+5)
+Apt update
+6)
+Apt install inkscape 
+Apt install isc-dhcp-server
+Apt install bind9
+Nano /etc/dhcp/dhcpd.conf
+	Subnet 192.168.60.0 netmask 255.255.255.192{
+Range 192.168.60.1	192.168.60.50;
+Host maturant{
+Hardware ethernet 70:85:E3:2A:FE:05;
+}
+}
+Ip a
+Poslední -> enp0s8 (coppy)
+Nano /etc/default/isc-dhcp-server
+	INTERFACEv4 =“CoppyPase(enp0s8)“
+Ip a a 192.168.60.60/26 dev enp0s8(padesát členu)
+Service isc-dhcp status
+ctrl+c (close)
+Service isc-dhcp restart
+-||- status ->(Runin)
+-||-
+Cd /etc/bind/
+ls
+cat named.conf.default-zones
+local host(coppy)
+ nano named.conf.udelatko.net	
+(CoppyPase)
+„localhost“ -> „udelatko“
+„localhost“ -> udelatoko.net
+Nano named.conf
+	++include “/etc/bind/named.udelatko.net“
+Cp db.local udelatko.net
+Nano udelatko.net
+	Localhost root.local host -> udealtko.net root.udelatko.net
+	(cisla posobe)
+	Datum dne práce pospátku (rok měsíc den verce(01))
+	3h
+	30m
+	10h
+5h
+Localhost -> udelatko.net
+A -> 192.168.60.60	
+	AAAA -> smazat
+++(empty)  	IN	 MX 10 	mail.udelatko.net
+++ MAIL	 IN  	A  	192.168.60.59
+++ www	 IN 	A 	192.168.60.58
+++Web	 IN 	CNAME	 www.udelatko.net.
+7)
+Service cron status -> runin
+service isc-dhcp-server status -> runin
+service bind9 status -> runin
+8)
+apt install apache2
+cd /etc/apache2/sites-avaiable/
+ls
+cp 000-default.conf udealtko.net.conf
+nano udelatko.net.conf
+	#ServerName example.com -> ServerName www.udelatko.net	
+	DocumentRoot /mujweb
+mkdir /mujweb
+cd /mujweb/
+nano index.html -> nazdar ty kretene tady dej text
+a2ensite udelatko.net.conf
+systemctl reload apache2
+heslo(asdf!123)
+nano /etc/hosts
+	localhost -> www.udelatko.net
+cd .. 
+cd /etc/apache2/conf-avaiable/
+nano udelatko.conf
+	<Directory /mujweb>
+ 	   Directoryindex index.html
+ 	   Require all granted
+ 	  Allow from all
+</Directory>
+a2ensite udelatko.net.conf
+a2enconf udelatko.conf
+systemctl reload apache2 (heslo(asdf!123))
+
+
+
+
+
