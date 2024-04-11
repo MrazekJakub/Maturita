@@ -1,0 +1,126 @@
+1. Instalace Windows Server přes VirtualBox 
+     
+     - povolit dvě síťové karty (jednu pro vnitřní síť(intnet), a druhou pro NAT)
+
+
+2. Konfigurace lokálního serveru
+     
+     - V nastavení si vyhledáme Ethernet a klikneme na "Change adapter options"
+
+     - Přejmenujeme si jednu síť na intnet a druhou na NAT (co je co zjistíme ve VirtualBoxu v nastavení v sekci síť pomocí MAC adresy)
+
+     - Nastavíme Intnet pomocí properties (IPv4)
+         - Nastavíme IP adresu 192.168.0.254 (poslední počítač v síti(255 je broadcast))
+         - Default gateway nastavíme 192.168.0.1 (první počítač v síti)
+         - Preffered DNS server nastavíme adresu našeho stroje (192.168.0.254)
+         - Alternate DNS server nastavíme 8.8.8.8
+
+     - V Server Manageru klikneme na Local Server a přejmenujeme si počítač (Compuetr Name) 
+         - po přejmenování restartujeme počítač
+     
+     - Povolíme Remote desktop
+
+
+3. Přidání a instalace rolí
+     
+     - V Server Manageru klikneme na Add roles And Features
+         - Nainstalujeme Active Directory Domain Services(AD DS), DHCP server, DNS server, Web server 
+         - V Confirmation zaškrtneme "Restart the destination server automatically if required" a dáme Install
+         - Po instalaci nám nahoře u vlaječky vyskočí vykřičníky které upozorňují na konfiguraci rolí (AD DS a DHCP). Klikneme na vlaječku a můžeme začít        konfiguraci
+
+
+4. Konfigurace Active Directory
+     - V Deployment configuration dáme "Add a new forest"
+         - Root domain name = test.local
+     - V Domain Controller Options můžeme nastavit heslo pro obnovení
+     - Po instalaci se počítač povýší na řadič domény (restaruje se PC)
+
+
+5. Konfigurace DHCP
+     - v Authorization dáme dole Commit
+
+
+6. DNS
+   - V Tools spustíme DNS a v test.local přidáme novou delegaci (New Host A or AAAA) a pojmenujeme jí "www" a IP adresu nastavíme 192.168.0.254
+   - Přidáme další delegaci (CNAME) a pojmenujeme jí "web" a FQDN napíšeme "www.test.local"
+
+
+7. DHCP
+   - Přes IPv4 vytvoříme nový rozsah (scope) a pojmenujeme ho třeba myNet
+         - Začínající IP adresu nastavíme na 192.168.0.10 a konečnou jako 192.168.0.250
+         - Můžeme nastavit vyloučení IP adres stejnou metodou
+         - Nastavíme dobu trvání třeba na 10 minut
+         - Nastavíme gateway (192.168.0.1)
+         - Přidáme DNS servery (192.168.0.254 a posuneme nahoru(Up), dále 8.8.8.8)
+   - Přidáme rezervaci (name:xxx, IP: 192.168.0.9, MAC: aabbccdd00)
+   
+
+8. AD DS
+   - V Tools spustíme Active Directory Users and Computers (starší rozhraní) nebo Active Directory Administrative Centre (novější rozhraní)
+   - V jednom z rozhraní vytvoříme v test.local nové dvě organizační jednotky (studenti, ucitele)
+   - V OJ studenti vytvoříme skupinu studenti a v OJ ucitele vytvoříme skupinu ucitele
+
+   - Vytvořímenového uživatele "Jan Novak" a nastavíme parametry, přidáme do skupiny studenti a nastavíme profile path na \\rambo\profiles\novak (adresáře vytvoříme)
+   - Connect: \\rambo\home\novak
+
+   - Vytvoříme nového uživatele "Josef Nos" a nastavíme parametry, přidáme do skupiny ucitele a Domain Admins
+   - Vytvoříme další OJ po jménem services a v ní uživatele "www"
+
+
+9. IIS
+   - V Tools spustíme IIS a do "Sites" pomocí pravého tlačítka přidáme nový website
+        - Site Name: www 
+        - V disku C: vytvoříme složku webs a v ní podsložku www 
+        - Physical path: C:/webs/www
+        - Našemu vytvořenému uživateli "www" dáme oprávnění ke složce www (Půjdeme do vlastností složky www a do sekce security kde přidáme uživatele "www")
+        - Ve složce www vytvoříme nový Textový Dokument (POZOR!! Nahoře vybereme sekci View a vpravo zaškrtneme File Name Extensions pro zobrazení koncovek  souborů)
+        - V Novém Textovém Dokumentu napíšeme "<h1>Hello world!</h1>" a soubor přejmenujem na index.html
+        - Poté klikneme na Connect as... a vybereme specifikého uživatele
+                - user name: test\www
+                - nastavíme nějaké heslo
+        
+        - Host name: www.test.local
+        - Klikneme na Ok
+        - Při zadání www.test.local do prohlížeče by se nám měl zobrazit náš index.html
+        
+
+     
+   - Přidáme další website
+        - Site name: is 
+        - Physical path: C:\webs\is
+        - Ve složce is vytvoříme Nový Textový Dokument a v něm napíšeme <h1>Information system</h1>
+        - Dokument přejmenujeme na default.html
+        - Opět stejným způsobem dáme uživateli www oprávnění
+        - Klikneme opět na Connect as... a vybereme specifikého uživatele
+               - user name: test\www
+               - nastavíme nějaké heslo
+        - Nastavíme Port na: 12345
+        - Host name: www.test.local
+        - Po vytvoření dáme do prohlížeče www.test.local:12345\default.html
+        
+
+10. Žádost o certifikát v IIS
+        - V IIS půjdeme do našeho počítače (názevpc (TEST\Administrator)) a klikneme na server certificates
+        - Vpravo klikneme na Create Certificate Request
+               - Common name: www.test.local
+               - Organization: SSCR Humpolec
+               - Organizational unit: test
+               - City/locality: Humpolec
+               - State/province: Vysocina
+               - Country/Region: CZ
+
+        - V dalším okně nastavíme bit lenght na 4096
+        - V C: vytvoříme složku Cert a v ní soubor crs_www_test_local.txt 
+        - Klikneme na Finish a v souboru crs_www_test_local.txt by se nám měl vypsat certifikát
+   
+  
+   
+
+     
+
+
+
+
+
+         
+  
