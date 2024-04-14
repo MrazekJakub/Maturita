@@ -1,0 +1,80 @@
+JavaFX morzeovka:
+Vytvořit si button(translateBtn), TextArea(resultArea) a TextField(userField).
+To je tak pro view hotovo.
+Tedka je Controlleru. Nesmíme prvně zapomenou na „implements Initializable“ potom až budeme mít FXML, tak si uděláme tzv. HashMapu. Neboli „String[] Morzeovka = new String[]{Zde budou znaky pro porzeovku};“. Zde jsou:
+
+String[] Morzeovka = new String[]{
+        "●-",
+        "-●●●",
+        "-●-●",
+        "-●●",
+        "●",
+        "●●-●",
+        "--●",
+        "●●●●",
+        "●●",
+        "●---",
+        "-●-",
+        "●-●●",
+        "--",
+        "-●",
+        "---",
+        "●--●",
+        "--●-",
+        "●-●",
+        "●●●",
+        "-",
+        "●●-",
+        "●●●-",
+        "●--",
+        "-●●-",
+        "-●--",
+        "--●●",
+        "-----",
+        "●----",
+        "●●---",
+        "●●●--",
+        "●●●●-",
+        "●●●●●",
+        "-●●●●",
+        "--●●●",
+        "---●●",
+        "----●",
+        "    "
+};
+Poté si uděláme pole znaků, neboli „char[] Letter = new char[]{Zde bude abeceda a poté 0-9 ve formátu  'a', 'b', 'prázdný znak na konci' };“
+
+Samosebou když jsme dali Initialize tak vložíme i toto:
+
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        //Přiřazení getResult na tlačítko
+        traslateBtn.setOnAction(this::getResult);
+    }
+
+A poté bude porovnání což znamená z minulého si uděláme void a bude se jmenovat jak víme z initialize „getResult“ a bude to action event{}
+
+Neboli to jde i s porovnáním znaků takto:
+
+void getResult(ActionEvent event){
+    String text = userField.getText();
+    String resultText = "";
+    char[] poleZnaku = text.toCharArray();
+
+    for (char item : poleZnaku) {
+        int i = 0;
+        for (char itemZnak : Letter) {
+            if (item == itemZnak) { // zde získáme první znak z řetězce
+                resultText += Morzeovka[i] + " | ";
+                break; // Zastaví procházení, protože jsme našli odpovídající znak
+            }
+            i++;
+            if(i>36){
+                resultText += "Znak nebyl nalezen" + " | ";
+            }
+        }
+    }
+    resultArea.setText(resultText);
+}
+
