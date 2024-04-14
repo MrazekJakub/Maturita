@@ -1,0 +1,137 @@
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.text.Text;
+
+public class HelloController implements Initializable {
+    @FXML
+    private TextField hrubaField;
+    @FXML
+    private Text zalohaBonus;
+    @FXML
+    private Button minusBtn;
+    @FXML
+    private TextField ohodnoceniField;
+    @FXML
+    private Button plusBtn;
+    @FXML
+    private Button resultBtn;
+    @FXML
+    private Text resultText;
+    @FXML
+    private Text socialniText;
+    @FXML
+    private Text zalohaText;
+    @FXML
+    private Text childText;
+    @FXML
+    private Text zdravotniText;
+    int ChildCount = 0;
+
+    public HelloController() {
+    }
+
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        this.plusBtn.setOnAction(this::plus);
+        this.minusBtn.setOnAction(this::minus);
+        this.resultBtn.setOnAction(this::getResult);
+    }
+
+    public void plus(ActionEvent event) {
+        ++this.ChildCount;
+        this.childText.setText(String.valueOf(this.ChildCount));
+    }
+
+    public void minus(ActionEvent event) {
+        if (this.ChildCount != 0) {
+            --this.ChildCount;
+            this.childText.setText(String.valueOf(this.ChildCount));
+        }
+
+    }
+
+    public void errorAlert(String header, String content) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setHeaderText("Chyba");
+        alert.setHeaderText(header);
+        if (content != null) {
+            alert.setContentText(content);
+        }
+
+        alert.show();
+    }
+
+    public void getResult(ActionEvent event) {
+        double hrubaMzda = 0.0;
+        if (this.hrubaField.getText().equals("")) {
+            this.errorAlert("Zadejte výši hrubé mzdy", (String)null);
+        } else {
+            try {
+                int mzda = Integer.valueOf(this.hrubaField.getText().replace(" ", ""));
+                int ohodnoceni = 0;
+                if (!this.ohodnoceniField.getText().equals("")) {
+                    ohodnoceni = Integer.parseInt(this.ohodnoceniField.getText().replace(" ", ""));
+                } else {
+                    this.ohodnoceniField.setText("0");
+                }
+
+                hrubaMzda = (double)(mzda + ohodnoceni);
+                double zdravotni = 0.045 * hrubaMzda;
+                double socialni = 0.065 * hrubaMzda;
+                double zaloha = Math.ceil(hrubaMzda / 100.0) * 100.0 * 0.15;
+                if (this.ChildCount == 0) {
+                    zaloha -= 2320.0;
+                } else {
+                    switch (this.ChildCount) {
+                        case 1:
+                            zaloha -= 1267.0;
+                            break;
+                        case 2:
+                            zaloha -= 2884.0;
+                            break;
+                        case 3:
+                            zaloha -= 4901.0;
+                            break;
+                        default:
+                            int childminus3 = this.ChildCount - 3;
+                            zaloha -= (double)(4901 + 2017 * childminus3);
+                    }
+                }
+
+                DecimalFormat df = new DecimalFormat("#.###");
+                Text var10000 = this.socialniText;
+                String var10001 = df.format(socialni);
+                var10000.setText(String.valueOf(var10001) + " Kč");
+                var10000 = this.zdravotniText;
+                var10001 = df.format(zdravotni);
+                var10000.setText(String.valueOf(var10001) + " Kč");
+                if (zaloha > 0.0) {
+                    this.zalohaBonus.setText("Záloha na daň");
+                    var10000 = this.zalohaText;
+                    var10001 = df.format(zaloha);
+                    var10000.setText(String.valueOf(var10001) + " Kč");
+                } else {
+                    this.zalohaBonus.setText("Daňový bonus");
+                    var10000 = this.zalohaText;
+                    var10001 = df.format(Math.abs(zaloha));
+                    var10000.setText(String.valueOf(var10001) + " Kč");
+                }
+
+                System.out.println("" + mzda + " " + ohodnoceni);
+                var10000 = this.resultText;
+                var10001 = df.format(hrubaMzda - socialni - zdravotni - zaloha);
+                var10000.setText(String.valueOf(var10001) + " Kč");
+            } catch (Exception var13) {
+                this.errorAlert("Zadej pouze čísla", var13.getLocalizedMessage());
+            }
+        }
+
+    }
+}
