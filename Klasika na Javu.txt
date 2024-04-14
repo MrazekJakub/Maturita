@@ -1,0 +1,2 @@
+ stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));    Toto je pøidání ikony pro náš program, ikona je vložená ve složce resources v com.atd
+ 
